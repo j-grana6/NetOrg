@@ -17,6 +17,7 @@ parameters = {"innoise" : 2, # Stddev on incomming messages
               "envobsnoise" : 2, # Stddev on observing environment
               "batchsize" : 1000} # Training Batch Size
 
+tf.set_random_seed(634)
 class Organization(object):
     def __init__(self, num_environment, num_agents, innoise,
                      outnoise, fanout, statedim, envnoise, envobsnoise,
@@ -33,8 +34,9 @@ class Organization(object):
         self.objective  =  self.loss()
         self.learning_rate = tf.placeholder(tf.float64)
         self.decay= 0.001
-        self.optimize = tf.train.AdadeltaOptimizer(self.learning_rate, rho=.9).minimize(self.objective)
+        #self.optimize = tf.train.AdadeltaOptimizer(self.learning_rate, rho=.9).minimize(self.objective)
         #self.optimize = tf.train.RMSPropOptimizer(self.learning_rate).minimize(self.objective)
+        self.optimize = tf.train.GradientDescentOptimizer(self.learning_rate).minimize(self.objective)
         self.sess = tf.Session()
         init = tf.global_variables_initializer()
         self.sess.run(init)
@@ -111,7 +113,7 @@ class Organization(object):
         loss =  -(-differences - cost)
         return loss
 
-    def train(self, niters, lrinit=100, iplot=False, verbose=False):
+    def train(self, niters, lrinit=.00001, iplot=False, verbose=False):
         if iplot:
             fig, ax = plt.subplots()
             ax.plot([1],[1])
