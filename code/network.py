@@ -195,3 +195,5 @@ class Results(object):
     
     
         
+org = Organization(**parameters)
+org.train(1000, verbose=True)
